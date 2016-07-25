@@ -1,113 +1,128 @@
-var session_interval;
-var break_interval;
-var secInMin = 2;
+var sessionInterval; // session int
+var breakInterval; 
+var secInMin = 3; // defining how much seconds in each 'minute'
 
-var session_time = 2;
-var session_started = false;
-var session_paused = true;
+var sessionTime = 1-1; // defining how much minutes
+var sessionStarted = false; // first time its started, it becomes and stays true.
+var sessionPaused = true; 
+var sessionActive = false;
 
-var break_time = 1;
-var break_started = false;
-var break_paused = true;
+var breakTime = 1-1; 
+var breakStarted = false; // first time its started, it becomes and stays true.
+var breakPaused = true;
+var breakActive = false;
 
-$('.counter').click(function sessionPausing(){
+var cycleFinished = false;
+
+$('.counter').click(function sessionPausing(){ //kinda pauses counter by adding false 'start' class.
   $('.counter').toggleClass('start');
-  session_paused = !session_paused;
+  sessionPaused = !sessionPaused; //toggling from true to false 
+  breakPaused = !breakPaused;
+  console.log(breakPaused);
 });
-
-$('.break').click(function breakPausing(){
-  $('.break').toggleClass('start');
-  break_paused = !break_paused;
-});
-
 
 $('.add-time').click(function addingSessionTime(){
-	if(session_paused){
-		$('.session-time').html(session_time += 1);
+	if(sessionPaused){ //change session time if session is paused
+		$('.session-time').html(sessionTime += 1);
 	}
 });
 
 $('.remove-time').click(function removingSessionTime(){
-	if(session_paused){
-		$('.session-time').html(session_time -= 1);
+	if(sessionPaused){
+		$('.session-time').html(sessionTime -= 1);
 	}
 });
 
 $('.add-break').click(function addingBreakTime(){
-	if(session_paused){
-		$('.break-time').html(break_time += 1);
+	if(breakPaused){ // change break time if break is paused
+		$('.break-time').html(breakTime += 1);
 	}
 });
 
 $('.remove-break').click(function removingBreakTime(){
-	if(session_paused){
-		$('.break-time').html(break_time -= 1);
-	}
-});
-
-$('.break').click(function startingBreak(){
-	if(!break_started){
-		break_interval = setInterval(breakCounter, 1000);
+	if(breakPaused){
+		$('.break-time').html(breakTime -= 1);
 	}
 });
 
 $('.counter').click(function startingSession(){
-	if(!session_started){
-		session_interval = setInterval(sessionCounter, 1000);
+	$('.starting').fadeOut();
+	if(!sessionStarted){ // same thing
+		sessionStarted = true;
+		sessionActive = true;
+		sessionInterval = setInterval(sessionCounter, 1000);
 	}
 });
 
 function sessionCounter(){
-	session_started = true;
-	if($('.counter').hasClass('start')){
-		if(secInMin < 10){
-			$('.counter').html('Session:' + session_time + ':0' + secInMin--);
+	if($('.counter').hasClass('start')){ //if counter isnt paused
+		if(secInMin < 10){ //formating: adding zero to numbers under 10. e.g. :09, :08, :07...
+			$('.counter-paragraph').html(sessionTime + ':0' + secInMin--);
+			$('.sess-or-bre-par').html('session');
 		}else{
-			$('.counter').html('Session:' + session_time + ':' + secInMin--);
+			$('.counter-paragraph').html(sessionTime + ':' + secInMin--);//numbers from 59 to 10.
+			$('.sess-or-bre-par').html('session');
 		}
-		if(secInMin === -1){
-			secInMin = 5;
-			session_time--
+		if(secInMin === -1){ //if minute is passed, if we've passed zero,
+			secInMin = 3; // new seconds for new minute
+			sessionTime-- // removing one minute.
 		}
-		if(session_time === -1){
-			clearInterval(session_interval);
-		  $('.counter').toggleClass('break');
-			break_interval = setInterval(breakCounter, 1000);
-			session_started = false;
+		if(sessionTime <= -1){ //if session time is below zero
+			clearInterval(sessionInterval); // stop session 
+		  $('.counter').addClass('break'); // class for break to start
+			sessionActive = false; // sessionActive = false so break can be reseted
+			breakInterval = setInterval(breakCounter, 1000); // starting break
+			breakStarted = true;
+			breakActive = true;
 		}
   }
+  sessionActive = true;
 }
 
 function breakCounter(){
-	if($('.break').hasClass('start')){
-		if(secInMin < 10){
-			$('.break').html('Break:' + break_time + ':0' + secInMin--);
+	clearInterval(sessionInterval); // stoping session interval??????
+	sessionActive = false; // break cant be resetd if sessionStarted is true;
+	if($('.break').hasClass('start')){ //if .counter.break has false class start(if is active)
+		if(secInMin < 10){ //seconds in minute
+			$('.counter-paragraph').html(breakTime + ':0' + secInMin--); //removing sec for nums below 10.
+			$('.sess-or-bre-par').html('break');
 		}else{
-			$('.break').html('Break:' + break_time + ':' + secInMin--);
+			$('.counter-paragraph').html(breakTime + ':' + secInMin--); // removing sec for numbers 10-59.
+			$('.sess-or-bre-par').html('break');
 		}
-		if(secInMin === -1){
-			secInMin = 5;
-			break_time--
+		if(secInMin === -1){ //when one minute passes,
+			secInMin = 3; //new minute in seconds
+			breakTime--; //removing one minute
 		}
-		if(break_time === -1){
-			clearInterval(break_interval);
-			break_started = false;
+		if(breakTime <= -1){ // if break time is over,
+			clearInterval(breakInterval); // stopping break interval
+			breakActive = false; // break active = false, so it can be reseted.
+			cycleFinished = true;
 		}
   }
-	break_started = true;
+  breakActive = true;
 }
 
 $('.reset').click(function reseting(){
-	alert(session_started);
-	if(session_started){
-		clearInterval(session_interval);
-		session_time = 1;
-		secInMin = 2;
-		session_interval = setInterval(sessionCounter, 1000);
-	}else if(break_started){
-		clearInterval(break_interval);
-		break_time = 1;
-		secInMin = 2;
-		break_interval = setInterval(breakCounter, 1000);
+	console.log($('.counter-paragraph').text())
+	if(sessionActive){ //reset session
+		clearInterval(sessionInterval);
+		sessionTime = 25-1;
+		secInMin = 59;
+		sessionInterval = setInterval(sessionCounter, 1000);
+	}else if(breakActive && !cycleFinished){ // reset break
+		clearInterval(breakInterval);
+		breakTime = 10-1;
+		secInMin = 59;
+		breakInterval = setInterval(breakCounter, 1000);
+	}else if(cycleFinished){
+		clearInterval(breakInterval);
+		clearInterval(sessionInterval);
+		sessionTime = 25-1;
+		secInMin = 59;
+		breakTime = 10-1;
+		sessionInterval = setInterval(sessionCounter, 1000);
+		sessionStarted = true;
+		sessionActive = true;
 	}
 });

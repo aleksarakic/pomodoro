@@ -3,17 +3,32 @@
 <head>
 	<title>Pomodoro</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto+Condensed" rel="stylesheet">
 </head>
 <body>
-	<h1>Pomodoro Clock</h1>
-	<p class="counter">&nbsp;</p>
-	<button class="reset">Reset</button><br>
-	<button class="add-time">+</button>
-	<p class="session-time">25</p>
-	<button class="remove-time">-</button><br>
-	<button class="add-break">+</button>
-	<p class="break-time">15</p>
-	<button class="remove-break">-</button>
+	<audio>
+	  <source src="http://www.myinstants.com/media/sounds/alarm.mp3"></source>
+	</audio>
+
+	<div class="heading-cont">
+		<h2 class="main-heading">POMODORO</h2>
+	</div>
+	<div class="counter-container">
+		<div class="counter">
+			<p class="starting">start</p>
+			<p class="counter-paragraph">&nbsp;</p>
+			<p class="sess-or-bre-par"></p>
+		</div>
+	</div>
+	<div class="buttons-container">
+	<button class="add-time">+</button><!--
+	--><p class="session-time">25</p><!--
+	--><button class="remove-time">-</button>
+	<button class="reset">reset</button>
+	<button class="add-break">+</button><!--
+	--><p class="break-time"> 15</p><!--
+	--><button class="remove-break">-</button>
+	</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script type="text/javascript" src="script.js"></script>
 </body>
